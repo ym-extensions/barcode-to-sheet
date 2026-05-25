@@ -132,16 +132,8 @@ header h1 {
 #reader {
   width: 100%;
   height: 100%;
-}
-
-/* html5-qrcodeが生成する要素を調整 */
-#reader video {
-  width: 100% !important;
-  height: 100% !important;
   object-fit: cover;
 }
-
-#reader canvas { display: none !important; }
 
 /* スキャンオーバーレイ */
 #scan-overlay {

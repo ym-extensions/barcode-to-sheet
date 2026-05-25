@@ -30,7 +30,7 @@
     <!-- カメラエリア -->
     <div id="scanner-section" class="card">
       <div id="reader-container">
-        <div id="reader"></div>
+        <video id="reader" playsinline muted></video>
         <div id="scan-overlay">
           <div id="scan-line"></div>
           <div id="scan-corners">
@@ -64,10 +64,10 @@
     </div>
   </div>
 
-  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.0.7 | <span id="debug-info" style="cursor:pointer;text-decoration:underline;" onclick="alert(navigator.userAgent)">UA確認</span></div>
+  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.0.8 | <span id="debug-info" style="cursor:pointer;text-decoration:underline;" onclick="alert(navigator.userAgent)">UA確認</span></div>
 
-  <!-- html5-qrcode CDN -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <!-- ZXing CDN -->
+  <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

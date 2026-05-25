@@ -84,14 +84,13 @@
       return;
     }
 
-    scanner = new Html5Qrcode('reader');
-    const config = { fps: 10 };
-
-    scanner.start(
-      { facingMode: 'environment' },
-      config,
-      onScanSuccess,
-      () => {}  // エラーは無視（未検出フレームは毎フレーム来るため）
+    scanner = new ZXing.BrowserMultiFormatReader();
+    scanner.decodeFromConstraints(
+      { video: { facingMode: { ideal: 'environment' } } },
+      'reader',
+      (result, err) => {
+        if (result) onScanSuccess(result.getText());
+      }
     ).then(() => {
       isScanning = true;
       startBtn.disabled = true;
@@ -105,14 +104,12 @@
 
   function stopScanning() {
     if (scanner && isScanning) {
-      scanner.stop().then(() => {
-        scanner.clear();
-        scanner    = null;
-        isScanning = false;
-        startBtn.disabled = false;
-        stopBtn.disabled  = true;
-        setStatus('idle', '待機中');
-      });
+      scanner.reset();
+      scanner    = null;
+      isScanning = false;
+      startBtn.disabled = false;
+      stopBtn.disabled  = true;
+      setStatus('idle', '待機中');
     }
   }
 
