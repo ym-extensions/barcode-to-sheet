@@ -85,11 +85,7 @@
     }
 
     scanner = new Html5Qrcode('reader');
-    const config = {
-      fps: 10,
-      qrbox: (w, h) => ({ width: Math.min(w, h) * 0.9, height: Math.min(w, h) * 0.4 }),
-      aspectRatio: 1.0,
-    };
+    const config = { fps: 10 };
 
     scanner.start(
       { facingMode: 'environment' },
