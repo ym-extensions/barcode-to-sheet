@@ -42,13 +42,18 @@ header {
 }
 
 .btn-icon {
-  background: none;
+  background: #e8eaed;
   border: none;
-  font-size: 1.3rem;
+  border-radius: 50%;
+  font-size: 1.6rem;
   cursor: pointer;
-  padding: 4px;
-  line-height: 1;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 header h1 {
