@@ -3,6 +3,7 @@
 
   // ---- 定数 ----
   const STORAGE_KEY_URL    = 'gas_url';
+  const STORAGE_KEY_SHEET  = 'sheet_url';
   const STORAGE_KEY_QUEUE  = 'offline_queue';
   const COOLDOWN_MS        = 2000;  // 同一バーコードの連続読み取り防止
   const SCAN_INTERVAL_MS   = 500;
@@ -16,6 +17,7 @@
 
   // ---- DOM ----
   const gasUrlInput    = document.getElementById('gas-url');
+  const sheetUrlInput  = document.getElementById('sheet-url');
   const saveSettingsBtn= document.getElementById('save-settings-btn');
   const setupSection   = document.getElementById('setup-section');
   const startBtn       = document.getElementById('start-btn');
@@ -30,9 +32,11 @@
 
   // ---- 初期化 ----
   function init() {
-    const savedUrl = localStorage.getItem(STORAGE_KEY_URL) || '';
+    const savedUrl   = localStorage.getItem(STORAGE_KEY_URL)   || '';
+    const savedSheet = localStorage.getItem(STORAGE_KEY_SHEET) || '';
     if (savedUrl) {
-      gasUrlInput.value = savedUrl;
+      gasUrlInput.value   = savedUrl;
+      sheetUrlInput.value = savedSheet;
       setupSection.classList.add('hidden');
     }
 
@@ -45,14 +49,20 @@
   }
 
   function saveSettings() {
-    const url = gasUrlInput.value.trim();
+    const url      = gasUrlInput.value.trim();
+    const sheetUrl = sheetUrlInput.value.trim();
     if (!url.startsWith('https://script.google.com/macros/s/')) {
       alert('GASのWebアプリURLを正しく入力してください。\n（https://script.google.com/macros/s/ で始まるURLです）');
       return;
     }
+    if (sheetUrl && !sheetUrl.startsWith('https://docs.google.com/spreadsheets/d/')) {
+      alert('スプレッドシートURLを正しく入力してください。\n（https://docs.google.com/spreadsheets/d/ で始まるURLです）');
+      return;
+    }
     localStorage.setItem(STORAGE_KEY_URL, url);
+    localStorage.setItem(STORAGE_KEY_SHEET, sheetUrl);
     setupSection.classList.add('hidden');
-    showToast('URLを保存しました');
+    showToast('設定を保存しました');
   }
 
   // ---- スキャン開始 / 停止 ----
@@ -128,7 +138,8 @@
     const gasUrl = localStorage.getItem(STORAGE_KEY_URL);
     if (!gasUrl) return;
 
-    const payload = { barcode: code, timestamp: new Date().toISOString() };
+    const sheetUrl = localStorage.getItem(STORAGE_KEY_SHEET) || '';
+    const payload  = { barcode: code, timestamp: new Date().toISOString(), ...(sheetUrl && { sheetUrl }) };
 
     if (!navigator.onLine) {
       enqueueOffline(payload);
