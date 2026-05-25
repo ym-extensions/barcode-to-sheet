@@ -85,21 +85,35 @@
     }
 
     try {
-      if (typeof ZXing === 'undefined') {
+      if (typeof Html5Qrcode === 'undefined') {
         alert('ライブラリ読み込み失敗。ページを再読み込みしてください。');
         return;
       }
-      scanner = new ZXing.BrowserMultiFormatReader();
-      scanner.decodeFromVideoDevice(null, 'reader', (result, err) => {
-        if (result) onScanSuccess(result.getText());
-        if (err && !(err instanceof ZXing.NotFoundException)) {
-          console.error('scan error:', err);
-        }
+      scanner = new Html5Qrcode('reader');
+      const config = {
+        fps: 20,
+        qrbox: undefined,
+        videoConstraints: {
+          facingMode: 'environment',
+          width:  { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+      };
+
+      scanner.start(
+        { facingMode: 'environment' },
+        config,
+        onScanSuccess,
+        () => {}
+      ).then(() => {
+        isScanning = true;
+        startBtn.disabled = true;
+        stopBtn.disabled  = false;
+        setStatus('active', 'スキャン中');
+      }).catch(err => {
+        alert('カメラ起動失敗: ' + err.message);
       });
-      isScanning = true;
-      startBtn.disabled = true;
-      stopBtn.disabled  = false;
-      setStatus('active', 'スキャン中');
     } catch (err) {
       alert('エラー: ' + err.message);
     }
@@ -107,12 +121,14 @@
 
   function stopScanning() {
     if (scanner && isScanning) {
-      scanner.reset();
-      scanner    = null;
-      isScanning = false;
-      startBtn.disabled = false;
-      stopBtn.disabled  = true;
-      setStatus('idle', '待機中');
+      scanner.stop().then(() => {
+        scanner.clear();
+        scanner    = null;
+        isScanning = false;
+        startBtn.disabled = false;
+        stopBtn.disabled  = true;
+        setStatus('idle', '待機中');
+      });
     }
   }
 
