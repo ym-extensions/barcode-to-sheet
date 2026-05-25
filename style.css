@@ -132,15 +132,17 @@ header h1 {
 #reader {
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
-#reader video {
+#reader video,
+#reader canvas {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
 }
 
-#reader canvas { display: none !important; }
+#reader canvas.drawingBuffer { display: none !important; }
 
 /* スキャンオーバーレイ */
 #scan-overlay {

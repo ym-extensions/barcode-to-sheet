@@ -85,34 +85,42 @@
     }
 
     try {
-      if (typeof Html5Qrcode === 'undefined') {
+      if (typeof Quagga === 'undefined') {
         alert('ライブラリ読み込み失敗。ページを再読み込みしてください。');
         return;
       }
-      scanner = new Html5Qrcode('reader');
-      const config = {
-        fps: 20,
-        qrbox: undefined,
-        videoConstraints: {
-          facingMode: 'environment',
-          width:  { ideal: 1920 },
-          height: { ideal: 1080 },
+      Quagga.init({
+        inputStream: {
+          type: 'LiveStream',
+          target: document.querySelector('#reader'),
+          constraints: {
+            facingMode: 'environment',
+            width:  { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
         },
-        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-      };
-
-      scanner.start(
-        { facingMode: 'environment' },
-        config,
-        onScanSuccess,
-        () => {}
-      ).then(() => {
+        decoder: {
+          readers: ['code_128_reader', 'code_39_reader', 'ean_reader', 'ean_8_reader', 'i2of5_reader'],
+        },
+        locate: true,
+        frequency: 10,
+      }, (err) => {
+        if (err) {
+          alert('カメラ起動失敗: ' + err.message);
+          return;
+        }
+        Quagga.start();
+        scanner = Quagga;
         isScanning = true;
         startBtn.disabled = true;
         stopBtn.disabled  = false;
         setStatus('active', 'スキャン中');
-      }).catch(err => {
-        alert('カメラ起動失敗: ' + err.message);
+      });
+
+      Quagga.onDetected((data) => {
+        if (data && data.codeResult && data.codeResult.code) {
+          onScanSuccess(data.codeResult.code);
+        }
       });
     } catch (err) {
       alert('エラー: ' + err.message);
@@ -121,14 +129,13 @@
 
   function stopScanning() {
     if (scanner && isScanning) {
-      scanner.stop().then(() => {
-        scanner.clear();
-        scanner    = null;
-        isScanning = false;
-        startBtn.disabled = false;
-        stopBtn.disabled  = true;
-        setStatus('idle', '待機中');
-      });
+      Quagga.stop();
+      Quagga.offDetected();
+      scanner    = null;
+      isScanning = false;
+      startBtn.disabled = false;
+      stopBtn.disabled  = true;
+      setStatus('idle', '待機中');
     }
   }
 
