@@ -51,8 +51,8 @@
   function saveSettings() {
     const url      = gasUrlInput.value.trim();
     const sheetUrl = sheetUrlInput.value.trim();
-    if (!url.startsWith('https://script.google.com/macros/s/')) {
-      alert('GASのWebアプリURLを正しく入力してください。\n（https://script.google.com/macros/s/ で始まるURLです）');
+    if (!url.startsWith('https://script.google.com/macros/s/') && !url.startsWith('https://script.google.com/a/macros/')) {
+      alert('GASのWebアプリURLを正しく入力してください。\n（https://script.google.com/ で始まるURLです）');
       return;
     }
     if (sheetUrl && !sheetUrl.startsWith('https://docs.google.com/spreadsheets/d/')) {
