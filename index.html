@@ -65,7 +65,7 @@
   </div>
 
   <div id="debug-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#d93025;color:#fff;padding:8px;z-index:9999;font-size:12px;font-family:monospace;white-space:pre-wrap;word-break:break-all;"></div>
-  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.2.0 | <span style="cursor:pointer;text-decoration:underline;" onclick="alert('ZXing: ' + (typeof ZXing !== 'undefined' ? 'OK' : 'NG') + '\\nUA: ' + navigator.userAgent)">診断</span></div>
+  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.2.1 | <span style="cursor:pointer;text-decoration:underline;" onclick="alert('ZXing: ' + (typeof ZXing !== 'undefined' ? 'OK' : 'NG') + '\\nUA: ' + navigator.userAgent)">診断</span></div>
   <script>
     window.addEventListener('error', (e) => {
       const b = document.getElementById('debug-banner');
@@ -74,7 +74,7 @@
   </script>
 
   <!-- QuaggaJS (CODE128読み取り強化) -->
-  <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
+  <script src="https://unpkg.com/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
