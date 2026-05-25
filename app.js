@@ -16,9 +16,10 @@
   let totalCount    = 0;
 
   // ---- DOM ----
-  const gasUrlInput    = document.getElementById('gas-url');
-  const sheetUrlInput  = document.getElementById('sheet-url');
-  const saveSettingsBtn= document.getElementById('save-settings-btn');
+  const gasUrlInput      = document.getElementById('gas-url');
+  const sheetUrlInput    = document.getElementById('sheet-url');
+  const saveSettingsBtn  = document.getElementById('save-settings-btn');
+  const editSettingsBtn  = document.getElementById('edit-settings-btn');
   const setupSection   = document.getElementById('setup-section');
   const startBtn       = document.getElementById('start-btn');
   const stopBtn        = document.getElementById('stop-btn');
@@ -41,11 +42,19 @@
     }
 
     saveSettingsBtn.addEventListener('click', saveSettings);
+    editSettingsBtn.addEventListener('click', openSettings);
     startBtn.addEventListener('click', startScanning);
     stopBtn.addEventListener('click', stopScanning);
 
     // オンライン復帰時にキュー再送
     window.addEventListener('online', flushOfflineQueue);
+  }
+
+  function openSettings() {
+    gasUrlInput.value   = localStorage.getItem(STORAGE_KEY_URL)   || '';
+    sheetUrlInput.value = localStorage.getItem(STORAGE_KEY_SHEET) || '';
+    setupSection.classList.remove('hidden');
+    gasUrlInput.focus();
   }
 
   function saveSettings() {

@@ -10,7 +10,10 @@
   <div id="app">
     <header>
       <h1>バーコードスキャナー</h1>
-      <div id="status-badge" class="badge badge-idle">待機中</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div id="status-badge" class="badge badge-idle">待機中</div>
+        <button id="edit-settings-btn" class="btn-icon" title="設定を編集">⚙️</button>
+      </div>
     </header>
 
     <!-- 設定エリア（初回のみ表示） -->
