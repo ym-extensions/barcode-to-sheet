@@ -6,7 +6,15 @@
   const STORAGE_KEY_SHEET  = 'sheet_url';
   const STORAGE_KEY_QUEUE  = 'offline_queue';
   const COOLDOWN_MS        = 2000;  // 同一バーコードの連続読み取り防止
-  const SCAN_INTERVAL_MS   = 500;
+  const BARCODE_READERS    = [
+    'code_128_reader',
+    'code_39_reader',
+    'ean_reader',
+    'ean_8_reader',
+    'i2of5_reader',
+    '2of5_reader',
+    'codabar_reader',
+  ];
 
   // ---- 状態 ----
   let scanner       = null;
@@ -72,6 +80,7 @@
     localStorage.setItem(STORAGE_KEY_SHEET, sheetUrl);
     setupSection.classList.add('hidden');
     showToast('設定を保存しました');
+    flushOfflineQueue();
   }
 
   // ---- スキャン開始 / 停止 ----
@@ -100,7 +109,12 @@
           },
         },
         decoder: {
-          readers: ['code_128_reader', 'code_39_reader', 'ean_reader', 'ean_8_reader', 'i2of5_reader'],
+          readers: BARCODE_READERS,
+        },
+        locator: {
+          // レターパックのような細い一次元コードの線を潰さず解析する。
+          halfSample: false,
+          patchSize: 'medium',
         },
         locate: true,
         frequency: 10,
@@ -117,6 +131,7 @@
         setStatus('active', 'スキャン中');
       });
 
+      Quagga.offDetected();
       Quagga.onDetected((data) => {
         if (data && data.codeResult && data.codeResult.code) {
           onScanSuccess(data.codeResult.code);
@@ -171,24 +186,41 @@
 
     try {
       setStatus('sending', '送信中…');
-      const res = await fetch(gasUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await postToGas(gasUrl, payload);
 
       updateLastStatus('✓ スプレッドシートに記録しました', 'status-ok');
       updateHistoryStatus(code, 'ok');
     } catch (err) {
       console.error('送信失敗:', err);
       enqueueOffline(payload);
-      updateLastStatus('送信失敗：後で自動再送します', 'status-err');
+      if (err.isApplicationError) {
+        updateLastStatus(`記録失敗：${err.message}（設定修正後に再送します）`, 'status-err');
+      } else {
+        updateLastStatus('送信失敗：後で自動再送します', 'status-err');
+      }
       updateHistoryStatus(code, 'err');
     } finally {
       if (isScanning) setStatus('active', 'スキャン中');
     }
+  }
+
+  async function postToGas(gasUrl, payload) {
+    const res = await fetch(gasUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const result = await res.json();
+    if (result.status !== 'ok') {
+      const err = new Error(result.message || 'GASで記録できませんでした');
+      err.isApplicationError = true;
+      throw err;
+    }
+
+    return result;
   }
 
   // ---- オフラインキュー ----
@@ -206,22 +238,26 @@
     if (queue.length === 0) return;
 
     const failed = [];
+    let rejectedCount = 0;
+    let sentCount = 0;
     for (const payload of queue) {
       try {
-        const res = await fetch(gasUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      } catch {
+        await postToGas(gasUrl, payload);
+        sentCount++;
+      } catch (err) {
         failed.push(payload);
+        if (err.isApplicationError) {
+          rejectedCount++;
+        }
       }
     }
 
     localStorage.setItem(STORAGE_KEY_QUEUE, JSON.stringify(failed));
-    if (failed.length < queue.length) {
-      showToast(`オフライン中の${queue.length - failed.length}件を再送しました`);
+    if (sentCount) {
+      showToast(`保留中の${sentCount}件を再送しました`);
+    }
+    if (rejectedCount) {
+      showToast(`${rejectedCount}件は設定修正後に再送します`);
     }
   }
 

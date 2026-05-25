@@ -45,6 +45,7 @@
         <button id="start-btn" class="btn btn-primary">スキャン開始</button>
         <button id="stop-btn" class="btn btn-danger" disabled>停止</button>
       </div>
+      <p class="scan-guide">レターパックは、番号の下にある横長バーコードを枠内に映してください。QRコードは追跡番号ではありません。</p>
     </div>
 
     <!-- 直近スキャン結果 -->
@@ -65,7 +66,7 @@
   </div>
 
   <div id="debug-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#d93025;color:#fff;padding:8px;z-index:9999;font-size:12px;font-family:monospace;white-space:pre-wrap;word-break:break-all;"></div>
-  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.2.1 | <span style="cursor:pointer;text-decoration:underline;" onclick="alert('ZXing: ' + (typeof ZXing !== 'undefined' ? 'OK' : 'NG') + '\\nUA: ' + navigator.userAgent)">診断</span></div>
+  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.2.2 | <span style="cursor:pointer;text-decoration:underline;" onclick="alert('Quagga: ' + (typeof Quagga !== 'undefined' ? 'OK' : 'NG') + '\\nUA: ' + navigator.userAgent)">診断</span></div>
   <script>
     window.addEventListener('error', (e) => {
       const b = document.getElementById('debug-banner');

@@ -211,6 +211,13 @@ header h1 {
 
 #camera-controls .btn { flex: 1; }
 
+.scan-guide {
+  margin-top: 12px;
+  color: var(--text-sub);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 /* 直近スキャン結果 */
 #last-scan-section {
   text-align: center;
