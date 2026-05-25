@@ -87,7 +87,8 @@
     scanner = new Html5Qrcode('reader');
     const config = {
       fps: 10,
-      qrbox: { width: 300, height: 150 },
+      qrbox: (w, h) => ({ width: Math.min(w, h) * 0.9, height: Math.min(w, h) * 0.4 }),
+      aspectRatio: 1.0,
     };
 
     scanner.start(
