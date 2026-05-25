@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>バーコードスキャナー</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>バーコードスキャナー</h1>
+      <div id="status-badge" class="badge badge-idle">待機中</div>
+    </header>
+
+    <!-- 設定エリア（初回のみ表示） -->
+    <div id="setup-section" class="card">
+      <h2>初期設定</h2>
+      <label for="gas-url">GAS WebアプリURL</label>
+      <input type="url" id="gas-url" placeholder="https://script.google.com/macros/s/..." />
+      <button id="save-settings-btn" class="btn btn-secondary">保存</button>
+      <p class="hint">設定後は次回から自動読み込みされます</p>
+    </div>
+
+    <!-- カメラエリア -->
+    <div id="scanner-section" class="card">
+      <div id="reader-container">
+        <div id="reader"></div>
+        <div id="scan-overlay">
+          <div id="scan-line"></div>
+          <div id="scan-corners">
+            <span class="corner tl"></span>
+            <span class="corner tr"></span>
+            <span class="corner bl"></span>
+            <span class="corner br"></span>
+          </div>
+        </div>
+      </div>
+      <div id="camera-controls">
+        <button id="start-btn" class="btn btn-primary">スキャン開始</button>
+        <button id="stop-btn" class="btn btn-danger" disabled>停止</button>
+      </div>
+    </div>
+
+    <!-- 直近スキャン結果 -->
+    <div id="last-scan-section" class="card hidden">
+      <div id="last-barcode">---</div>
+      <div id="send-status"></div>
+    </div>
+
+    <!-- 履歴 -->
+    <div id="history-section" class="card">
+      <div class="history-header">
+        <h2>スキャン履歴</h2>
+        <span id="scan-count">0件</span>
+      </div>
+      <ul id="history-list"></ul>
+      <div id="empty-history">まだスキャンがありません</div>
+    </div>
+  </div>
+
+  <!-- html5-qrcode CDN -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
