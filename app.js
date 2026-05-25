@@ -84,22 +84,25 @@
       return;
     }
 
-    scanner = new ZXing.BrowserMultiFormatReader();
-    scanner.decodeFromConstraints(
-      { video: { facingMode: { ideal: 'environment' } } },
-      'reader',
-      (result, err) => {
-        if (result) onScanSuccess(result.getText());
+    try {
+      if (typeof ZXing === 'undefined') {
+        alert('ライブラリ読み込み失敗。ページを再読み込みしてください。');
+        return;
       }
-    ).then(() => {
+      scanner = new ZXing.BrowserMultiFormatReader();
+      scanner.decodeFromVideoDevice(null, 'reader', (result, err) => {
+        if (result) onScanSuccess(result.getText());
+        if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.error('scan error:', err);
+        }
+      });
       isScanning = true;
       startBtn.disabled = true;
       stopBtn.disabled  = false;
       setStatus('active', 'スキャン中');
-    }).catch(err => {
-      console.error(err);
-      alert('カメラを起動できませんでした。\nブラウザのカメラ許可を確認してください。');
-    });
+    } catch (err) {
+      alert('エラー: ' + err.message);
+    }
   }
 
   function stopScanning() {
