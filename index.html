@@ -64,7 +64,14 @@
     </div>
   </div>
 
-  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.0.9 | <span id="debug-info" style="cursor:pointer;text-decoration:underline;" onclick="alert(navigator.userAgent)">UA確認</span></div>
+  <div id="debug-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#d93025;color:#fff;padding:8px;z-index:9999;font-size:12px;font-family:monospace;white-space:pre-wrap;word-break:break-all;"></div>
+  <div style="text-align:center;font-size:0.7rem;color:#999;padding:4px 0 8px;">v1.1.0 | <span style="cursor:pointer;text-decoration:underline;" onclick="alert('ZXing: ' + (typeof ZXing !== 'undefined' ? 'OK' : 'NG') + '\\nUA: ' + navigator.userAgent)">診断</span></div>
+  <script>
+    window.addEventListener('error', (e) => {
+      const b = document.getElementById('debug-banner');
+      if (b) { b.style.display = 'block'; b.textContent = 'JS Error: ' + e.message + ' @ ' + (e.filename||'') + ':' + (e.lineno||''); }
+    });
+  </script>
 
   <!-- ZXing CDN -->
   <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
